@@ -12,17 +12,20 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
 public class RegisterServlet extends HttpServlet {
+	//SQL Code
 	private final String UPDATE_TABLE_SQL = "INSERT into users "
 			+ "(username, password)" + " VALUES(?, ?)";
 	
 	
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String confirmedPassword = request.getParameter("confirmedPassword");
@@ -73,6 +76,10 @@ public class RegisterServlet extends HttpServlet {
 			out.println("</p>");
 			out.println("</body>");
 			out.println("</html>");	
+			
+			//forward to LoginServlet
+			RequestDispatcher rd = request.getRequestDispatcher("LoginServlet");
+			rd.forward(request, response);
 		 }
 	
 	
