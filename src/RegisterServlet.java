@@ -24,6 +24,7 @@ public class RegisterServlet extends HttpServlet {
 	private final String UPDATE_TABLE_SQL = "INSERT into users "
 			+ "(username, password)" + " VALUES(?, ?)";
 	
+	private final String REDIRECT_PAGE = "login.html";
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 		String username = request.getParameter("username");
@@ -66,22 +67,24 @@ public class RegisterServlet extends HttpServlet {
 					}
 				
 			} catch (Exception e) {
-				out.println("<html><body><p>Eror with prepared statement or connecting to database</p></body></html>");
+				out.println("<html><body><p>Error with prepared statement or connecting to database</p></body></html>");
 			}
 			
 			out.println("<html>");
 			out.println("<body>");
 			out.println("<p>");
 			out.println("Thank you " + username + " for joining, your details are now stored in our database");
+			out.println("<a href= " + REDIRECT_PAGE + ">Login</a>");
 			out.println("</p>");
 			out.println("</body>");
 			out.println("</html>");	
 			
 			//forward to LoginServlet
-			RequestDispatcher rd = request.getRequestDispatcher("LoginServlet");
+			/*RequestDispatcher rd = request.getRequestDispatcher("LoginServlet");
 			rd.forward(request, response);
+			*/
 		 }
-	
+			out.close();
 	
     }	
 		
