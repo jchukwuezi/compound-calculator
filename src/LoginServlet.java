@@ -14,8 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginServlet extends HttpServlet {
 	//SQL Code
 	private final String CHECK_SQL = "SELECT * FROM Users WHERE " + "username =? AND password =?";
-	//Page to Open after successful login
+	//Response after successful login
 	private final String REDIRECT_PAGE = "calculate.html";
+	//Response after unsuccessful login
+	private final String REDO = "login.html";
+	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		//getting the details entered in the form
 		String username = request.getParameter("username");
@@ -49,7 +52,12 @@ public class LoginServlet extends HttpServlet {
 					out.println("</html");
 				}
 				else {
-					out.println("<html><body><p>Incorrect password or username</p></body></html>");
+					out.println("<html>");
+					out.println("<body>");
+					out.println("<p>Login Unsuccessful</p>");
+					out.println("<a href= " + REDO + ">Re Enter details</a>");
+					out.println("</body>");
+					out.println("</html");
 				}
 				
 				//close connection
@@ -59,12 +67,7 @@ public class LoginServlet extends HttpServlet {
 			out.println("<html><body><p>Error connecting to database</p></body></html>");
 		}
 			out.close();
-		
-		/*
-		//forward to CalculateServlet
-		RequestDispatcher rd = request.getRequestDispatcher("CalculationServlet");
-		rd.forward(request, response);
-		*/	
+			
 	}
 	
 

@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CalculationServlet extends HttpServlet {
 	private static DecimalFormat df = new DecimalFormat("0.00");
-	private final String REDIRECT_PAGE = "calculate.html";
+	private final String RELOAD = "calculate.html";
+	private final String LOGIN = "login.html";
+	private final String REGISTER = "register.html";
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String baseAmount = request.getParameter("baseAmount");
@@ -40,7 +42,9 @@ public class CalculationServlet extends HttpServlet {
 		out.println("Initial Balance: " + baseAmount + "<br>");
 		out.println("Total Interest : " + annualInterest + " %" + "<br>");
 		out.println("Final Value : " + cmpndInterest + "<br>");
-		out.println("<a href= " + REDIRECT_PAGE + ">New Calculation</a>");
+		out.println("<a href= " + RELOAD + ">New Calculation</a>");
+		out.println("<a href= " + LOGIN + ">Login</a>");
+		out.println("<a href= " + REGISTER + ">Register</a>");
 		out.println("</body>");
 		out.println("</html>");
 		

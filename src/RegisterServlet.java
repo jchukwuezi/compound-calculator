@@ -24,7 +24,13 @@ public class RegisterServlet extends HttpServlet {
 	private final String UPDATE_TABLE_SQL = "INSERT into users "
 			+ "(username, password)" + " VALUES(?, ?)";
 	
+	private String CHECK_SQL = "SELECT * FROM Users WHERE " + "username =?";
+	
+	//Response after successful registration
 	private final String REDIRECT_PAGE = "login.html";
+	
+	//Response after unsuccessful login
+	private final String REDO = "register.html";	
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 		String username = request.getParameter("username");
@@ -37,60 +43,72 @@ public class RegisterServlet extends HttpServlet {
 			if (password.equals(confirmedPassword)) {
 				
 			try {
-					//initialize database
+					// initialize database
 					Connection con;
-					con = DriverManager.getConnection("jdbc:mysql://localhost:3306/calcaccounts?serverTimezone=UTC", "root", "root");
-						
-					//Prepared statement: used to add a user and their password to the database
+					con = DriverManager.getConnection("jdbc:mysql://localhost:3306/calcaccounts?serverTimezone=UTC", "root",
+							"root");
+	
+					// Result set: to check if a username already exists
+					ResultSet rs;
+	
+					// Prepared statement: used to add a user and their password to the database
+					PreparedStatement checkUser = con.prepareStatement(CHECK_SQL);
 					PreparedStatement createUser = con.prepareStatement(UPDATE_TABLE_SQL);
 					
-					try {
-						//pass in values as parameters
-						createUser.setString(1, username);
-						createUser.setString(2, password);
-					} catch (Exception e) {
-						out.println("<html><body><p>Error passing in values as parameters</p></body></html>");
+	
+					// pass in values as parameters
+					checkUser.setString(1, username);
+					createUser.setString(1, username);
+					createUser.setString(2, password);
+	
+	
+					rs = checkUser.executeQuery();
+					if (rs.next()) { // if true, the username exists already
+						out.println("<html>");
+						out.println("<body>");
+						out.println("<p>This username already exists, please choose a unique one</p>");
+						out.println("<a href= " + REDO + ">Register</a>");
+						out.println("</body>");
+						out.println("</html");
 					}
 					
-					try {	
-						//executes update statement on prepared statement (DML)
+					else { //if unique, new user will be created
+						// executes update statement on prepared statement (DML)
 						int updatedRows = createUser.executeUpdate();
-					} catch (Exception e) {
-						out.println("<html><body><p>Error executing update on prepared statment</p></body></html>");
-					}
-					
-					try {
-						//close connection
-						createUser.close();
-					} catch (Exception e) {
-						out.println("<html><body><p>Error closing the prepared statement</p></body></html>");
+						out.println("<html>");
+						out.println("<body>");
+						out.println("<p>");
+						out.println("Thank you " + username + " for joining, your details are now stored in our database");
+						out.println("<a href= " + REDIRECT_PAGE + ">Login</a>");
+						out.println("</p>");
+						out.println("</body>");
+						out.println("</html>");		
 					}
 				
+					// close connection
+					createUser.close();
+					checkUser.close();
+					
 			} catch (Exception e) {
 				out.println("<html><body><p>Error with prepared statement or connecting to database</p></body></html>");
 			}
 			
-			out.println("<html>");
-			out.println("<body>");
-			out.println("<p>");
-			out.println("Thank you " + username + " for joining, your details are now stored in our database");
-			out.println("<a href= " + REDIRECT_PAGE + ">Login</a>");
-			out.println("</p>");
-			out.println("</body>");
-			out.println("</html>");	
 			
-			//forward to LoginServlet
-			/*RequestDispatcher rd = request.getRequestDispatcher("LoginServlet");
-			rd.forward(request, response);
-			*/
 		 }
+			else {
+				out.println("<html>");
+				out.println("<body>");
+				out.println("<p>");
+				out.println("The two passwords do not match, please try again");
+				out.println("<a href= " + REDO + ">Re-Enter Details</a>");
+				out.println("</p>");
+				out.println("</body>");
+				out.println("</html>");	
+			}
+			
 			out.close();
 	
     }	
 		
-		/*
-		//basic SQL to view all users in the database
-		Statement statement = connection.createStatement();
-		ResultSet rs = statement.executeQuery("select * from user");
-		*/			
+				
  }
